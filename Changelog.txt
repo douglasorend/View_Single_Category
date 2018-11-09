@@ -1,3 +1,7 @@
+v2.8 - November 9th, 2018
+o No functionality change.
+o Updated documentation to point to new website.
+
 v2.7 - March 5th, 2018
 o Changed operations in [b]Sources/QueryString.php[/b] for better compatibility.
 
