@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:SingleCategory</id>
-<version>2.5</version>
+<version>2.6</version>
 
 <file name="$boarddir/index.php">
 	<operation>
@@ -84,7 +84,7 @@
 			'cat_field' => !empty($context['single_cats']) ? $context['single_cats'] : '',]]></add>
 	</operation>
 	<operation>
-		<search position="replace"><![CDATA[$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '"></a>' . (!$context['user']['is_guest'] ? '<a href="' . $scripturl . '?action=unread;c='. $row_board['id_cat'] . '" title="' . sprintf($txt['new_posts_in_category'], strip_tags($row_board['cat_name'])) . '">' . $row_board['cat_name'] . '</a>' : $row_board['cat_name']);]]></search>
+		<search position="replace"><![CDATA[$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '"></a>' . (!$context['user']['is_guest'] ? '<a href="' . $scripturl . '?action=unread;c=' . $row_board['id_cat'] . '" title="' . sprintf($txt['new_posts_in_category'], strip_tags($row_board['cat_name'])) . '">' . $row_board['cat_name'] . '</a>' : $row_board['cat_name']);]]></search>
 		<add><![CDATA[
 				// Single Category Mod Edited This.
 				$categories[$row_board['id_cat']]['href'] = $scripturl . '?' . (!empty($context['TPortal']) || !empty($context['SPortal']) ? 'action=forum;' : '') . 'c=' . $row_board['id_cat'];

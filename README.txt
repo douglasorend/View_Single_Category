@@ -1,5 +1,5 @@
 [hr]
-[center][color=red][size=16pt][b]VIEW SINGLE CATEGORY v2.5[/b][/size][/color]
+[center][color=red][size=16pt][b]VIEW SINGLE CATEGORY v2.6[/b][/size][/color]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=29084][b]Written by SleePy[/b][/url]
 [url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]Taken Over By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=486]Link to Mod[/url]
 [/center]

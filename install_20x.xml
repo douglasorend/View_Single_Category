@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:SingleCategory</id>
-<version>2.5</version>
+<version>2.6</version>
 
 <file name="$boarddir/index.php">
 	<operation>
@@ -68,7 +68,7 @@
 					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_var'] . '=' . $context['session_id'] . '#c' . $row_board['id_cat'] : '',
 ]]></search>
 		<add><![CDATA[
-					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . (isset($context['single_cats']) ? 'c_redirect=' . (is_array($_REQUEST['c']) ? implode(',', $_REQUEST['c']) : $_REQUEST['c']) . ';' : '') . $context['session_var'] . '=' . $context['session_id'] . '#c' . $row_board['id_cat'] : '',
+					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . (isset($context['single_cats']) ? 'c_redirect=' . (is_array($_REQUEST['c']) ? implode(',', $_REQUEST['c']) : $_REQUEST['c']) . ';' : '') . $context['session_var'] . '=' . $context['session_id'] . ';c=' . $row_board['id_cat'] : '',
 ]]></add>
 	</operation>
 	<operation>
@@ -82,8 +82,7 @@
 			AND b.child_level >= {int:child_level}') : '
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1))
 		. (isset($context['single_cats']) ? "
-			AND c.id_cat{raw:cat_field}
-			ORDER BY board_order ASC" : ""),]]></add>
+			AND c.id_cat{raw:cat_field}" : ""),]]></add>
 	</operation>
 	<operation>
 		<search position="before"><![CDATA[
@@ -93,7 +92,7 @@
 	</operation>
 	<operation>
 		<search position="replace"><![CDATA[
-				$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '" href="' . (isset($row_board['can_collapse']) ? $categories[$row_board['id_cat']]['collapse_href'] : $categories[$row_board['id_cat']]['href']) . '">' . $row_board['cat_name'] . '</a>';
+				$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '"></a>' . ($categories[$row_board['id_cat']]['can_collapse'] ? '<a href="' . $categories[$row_board['id_cat']]['collapse_href'] . '">' . $row_board['cat_name'] . '</a>' : $row_board['cat_name']);
 ]]></search>
 		<add><![CDATA[
 				// Single Category Mod Edited This.
@@ -254,7 +253,8 @@
 			// Show the category name with a link to the category. (index.php?c=#)
 			echo '
 								<option value="" disabled="disabled">-----------------------------</option>
-								<option value="?', (!empty($context['TPortal']) || !empty($context['SPortal']) ? 'action=forum;' : ''), 'c=', $category['id'], '"', !is_array($context['category_selection']) && $context['category_selection'] == $category['id'] ? 'selected="selected"' : '', '>', $category['name'], '</option>								<option value="" disabled="disabled">-----------------------------</option>';
+								<option value="?', (!empty($context['TPortal']) || !empty($context['SPortal']) ? 'action=forum;' : ''), 'c=', $category['id'], '"', !is_array($context['category_selection']) && $context['category_selection'] == $category['id'] ? 'selected="selected"' : '', '>', $category['name'], '</option>
+								<option value="" disabled="disabled">-----------------------------</option>';
 
 			// for the children..
 			foreach ($category['boards'] as $board)
