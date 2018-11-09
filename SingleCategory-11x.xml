@@ -1,0 +1,317 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>SleePy:SingleCategory</id>
+	<version>2.1.9</version>
+	<file name="$sourcedir/BoardIndex.php">
+		<operation>
+			<search position="after"><![CDATA[
+	// Find all boards and categories, as well as related information.  This will be sorted by the natural order of boards and categories, which we control.
+]]></search>
+			<add><![CDATA[
+	// The sock may be dirty, lets find out.
+	if(isset($_REQUEST['c']) && !is_array($_REQUEST['c']) && is_numeric($_REQUEST['c']) && !(isset($_REQUEST['action']) && isset($_REQUEST['sa'])))
+		$context['single_cats'] = ' = ' . ((int) $_REQUEST['c']);
+	elseif(isset($_REQUEST['c']) && !isset($_REQUEST['sa']) && !(isset($_REQUEST['action']) && isset($_REQUEST['sa'])))
+	{
+		// Make c an array for crying out loud.
+		if(!is_array($_REQUEST['c']))
+			$_REQUEST['c'] = explode(',', $_REQUEST['c']);
+
+		$context['single_cats'] = ' IN (';
+		$no_start_comman = true;
+
+		foreach($_REQUEST['c'] as $cat)
+		{
+			if(!is_numeric($cat))
+				continue;
+
+			if($no_start_comman)
+				$no_start_comman = false;
+			else
+				$context['single_cats'] .= ',';	
+
+			$context['single_cats'] .= $cat;
+		}
+
+		$context['single_cats'] .= ')';
+
+		// Lets not be funny
+		if ($context['single_cats'] == ' IN ()')
+			unset($context['single_cats']);
+	}
+
+	// Single Category Mod Needs This to Load the JumpTo on BoardIndex
+	loadJumpTo();
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+		WHERE $user_info[query_see_board]" . (empty($modSettings['countChildPosts']) ? "
+			AND b.childLevel <= 1" : ''), __FILE__, __LINE__);
+]]></search>
+			<add><![CDATA[
+		WHERE $user_info[query_see_board]" . (empty($modSettings['countChildPosts']) ? "
+			AND b.childLevel <= 1" : '')
+	. (isset($context['single_cats']) ? "
+			AND c.id_cat" . $context['single_cats'] . "
+			ORDER BY boardOrder ASC" : ''), __FILE__, __LINE__);
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+				'collapse_href' => isset($row_board['canCollapse']) ? $scripturl . '?action=collapse;c=' . $row_board['ID_CAT'] . ';sa=' . ($row_board['isCollapsed'] > 0 ? 'expand' : 'collapse;') . '#' . $row_board['ID_CAT'] : '',
+]]></search>
+			<add><![CDATA[
+				'collapse_href' => isset($row_board['canCollapse']) ? $scripturl . '?action=collapse;c=' . $row_board['ID_CAT'] . ';sa=' . ($row_board['isCollapsed'] > 0 ? 'expand' : 'collapse;') . (isset($context['single_cats']) ? ';c_redirect=' . (is_array($_REQUEST['c']) ? implode(',', $_REQUEST['c']) : $_REQUEST['c']) : '')  . '#' . $row_board['ID_CAT'] : '',
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+			$context['categories'][$row_board['ID_CAT']]['link'] = '<a name="' . $row_board['ID_CAT'] . '" href="' . (isset($row_board['canCollapse']) ? $context['categories'][$row_board['ID_CAT']]['collapse_href'] : $context['categories'][$row_board['ID_CAT']]['href']) . '">' . $row_board['catName'] . '</a>';
+]]></search>
+			<add><![CDATA[
+			// Single Category Mod Edited This.
+			$context['categories'][$row_board['ID_CAT']]['link'] = '<a name="' . $row_board['ID_CAT'] . '" href="' . $context['categories'][$row_board['ID_CAT']]['href'] . '">' . $row_board['catName'] . '</a>';
+
+			// Single Category Mod
+			if (isset($context['single_cats']) && !is_array($_REQUEST['c']))
+				$context['linktree'][] = array(
+					'url' => $scripturl . '?' . (!empty($context['TPortal']) ? 'action=forum;' : '') . 'c=' . $row_board['ID_CAT'],
+					'name' => $row_board['catName']);
+			else
+			{
+				if(!isset($temp))
+					$temp = array();
+				$temp[] = $row_board['catName'];
+			}
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[
+				'href' => $scripturl . '#' . $row_board['ID_CAT'],
+]]></search>
+			<add><![CDATA[
+				'href' => $scripturl . '?' . (!empty($context['TPortal']) ? 'action=forum;' : '') . 'c=' . $row_board['ID_CAT'],
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+	// Load the users online right now.
+]]></search>
+			<add><![CDATA[
+	// Now that we finished that nasty while.. Lets do the link_tree addon.
+	if(isset($context['single_cats']) && is_array($_REQUEST['c']) && !empty($temp))
+	{
+		$no_string_start = true;
+		$names = '';
+		foreach($temp as $t)
+		{
+			if(!empty($no_string_start))
+				$no_string_start = false;
+			else
+				$names .= ' / ';
+			$names .= $t;
+		}
+
+		$context['linktree'][] = array(
+			'url' => $scripturl . '?c=' . implode(',', $_REQUEST['c']),
+			'name' => $names);
+	}
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Recent.php">
+		<operation>
+			<search position="replace"><![CDATA[
+				'href' => $scripturl . '#' . $row['ID_CAT'],
+				'link' => '<a href="' . $scripturl . '#' . $row['ID_CAT'] . '">' . $row['cname'] . '</a>'
+]]></search>
+			<add><![CDATA[
+				'href' => $scripturl . '?' . (!empty($context['TPortal']) ? 'action=forum;' : '') . 'c=' . $row['ID_CAT'],
+				'link' => '<a href="' . $scripturl . '?' . (!empty($context['TPortal']) ? 'action=forum;' : '') . 'c=' . $row['ID_CAT'] . '">' . $row['cname'] . '</a>'
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$context['linktree'][] = array(
+				'url' => $scripturl . '#' . (int) $_REQUEST['c'],
+				'name' => $name
+			);
+]]></search>
+			<add><![CDATA[
+			$context['linktree'][] = array(
+				'url' => $scripturl . '?' . (!empty($context['TPortal']) ? 'action=forum;' : '') . 'c=' . (int) $_REQUEST['c'],
+				'name' => $name
+			);
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+		$context['linktree'][] = array(
+			'url' => $scripturl . '#' . (int) $_REQUEST['c'][0],
+			'name' => $name
+		);
+]]></search>
+			<add><![CDATA[
+		$context['linktree'][] = array(
+			'url' => $scripturl . '?' . (!empty($context['TPortal']) ? 'action=forum;' : '') . 'c=' . (int) $_REQUEST['c'][0],
+			'name' => $name
+		);
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Subs-Boards.php">
+		<operation>
+			<search position="after"><![CDATA[
+	// And go back to the back to board index.
+	require_once($sourcedir . '/BoardIndex.php');
+	BoardIndex();
+]]></search>
+			<add><![CDATA[
+	// Are we redirecting to a category?
+	if (isset($_REQUEST['c_redirect']))
+	{
+		// Maybe its an array? Or a haxor.
+		if (!is_numeric($_REQUEST['c_redirect']) || is_array($_REQUEST['c_redirect']))
+		{
+			// Make c an array for crying out loud.
+			if (!is_array($_REQUEST['c_redirect']))
+				$_REQUEST['c_redirect'] = explode(',', $_REQUEST['c_redirect']);
+
+			// Remove the nasties.
+			foreach ($_REQUEST['c_redirect'] AS $key => $tmp)
+				if (!is_numeric(trim($tmp)))
+					unset($_REQUEST['c_redirect'][$key]);
+
+			// Put it back.
+			$_REQUEST['c_redirect'] = implode(',', $_REQUEST['c_redirect']);
+		}
+
+		// Get out of this mess.
+		redirectexit('c=' . $_REQUEST['c_redirect']);
+	}
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/Load.php">
+		<operation>
+			<search position="before"><![CDATA[if (count(array_intersect($user_info['groups'], $board_info['groups'])) == 0 && !$user_info['is_admin'])
+			$board_info['error'] = 'access';
+]]></search>
+			<add><![CDATA[/*
+			// Comment this out
+]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[array_reverse($board_info['parent_boards']),]]></search>
+			<add><![CDATA[*/
+
+		// This is cheating but TinyPortal Modifies this as well.
+		$context['linktree'] = array_merge(
+			$context['linktree'],
+			array(array(
+				'url' => $scripturl . '?' . (!empty($context['linktree'][0]['name']) && $context['linktree'][0]['name'] == 'Forum' ? 'action=forum;' : '') . 'c=' . $board_info['cat']['id'],
+				'name' => $board_info['cat']['name']
+			)),]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/BoardIndex.template.php">
+		<operation>
+			<search position="before"><![CDATA[
+		// Show the mark all as read button?
+		if ($settings['show_mark_read'] && !empty($context['categories']))
+				echo '
+				<table cellpadding="0" cellspacing="0" border="0" style="position: relative; top: -5px;">
+					<tr>
+							 ', template_button_strip($mark_read_button, 'top'), '
+					</tr>
+				</table>';
+		echo '
+			</td>
+		</tr>
+	</table>';
+	}
+]]></search>
+			<add><![CDATA[
+	if(isset($context['single_cats']))
+	{
+	echo '
+					<div style="float:right;">
+					<form action="', $scripturl, '" method="get" accept-charset="', $context['character_set'], '" name="jumptoForm">
+						<span class="smalltext"><label for="jumpto">' . $txt[160] . '</label>:</span>
+					<select name="jumpto" id="jumpto" onchange="if (this.selectedIndex > 0 &amp;&amp; this.options[this.selectedIndex].value) window.location.href = smf_scripturl + this.options[this.selectedIndex].value.substr(smf_scripturl.indexOf(\'?\') == -1 || this.options[this.selectedIndex].value.substr(0, 1) != \'?\' ? 0 : 1);">
+								<option value="">' . $txt[251] . ':</option>';
+
+	// Show each category - they all have an id, name, and the boards in them.
+	foreach ($context['jump_to'] as $category)
+	{
+		// Show the category name with a link to the category. (index.php#id)
+		echo '
+								<option value="" disabled="disabled">-----------------------------</option>
+								<option value="?', (!empty($context['TPortal']) ? 'action=forum;' : ''), 'c=', $category['id'], '">', $category['name'], '</option>
+								<option value="" disabled="disabled">-----------------------------</option>';
+
+		/* Now go through each board - they all have:
+				id, name, child_level (how many parents they have, basically...), and is_current. (is this the current board?) */
+		foreach ($category['boards'] as $board)
+		{
+			// Show some more =='s if this is a child, so as to make it look nice.
+			echo '
+								<option value="?board=', $board['id'], '.0"', $board['is_current'] ? ' selected="selected"' : '', '> ', str_repeat('==', $board['child_level']), '=> ', $board['name'], '</option>';
+		}
+	}
+	echo '
+						</select>&nbsp;
+					<input type="button" value="', $txt[161], '" onclick="if (this.form.jumpto.options[this.form.jumpto.selectedIndex].value) window.location.href = \'', $scripturl, '\' + this.form.jumpto.options[this.form.jumpto.selectedIndex].value;" />
+					</form></div><br/>';	
+	}
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/MessageIndex.template.php">
+		<operation>
+			<search position="replace"><![CDATA[
+								<option value="" disabled="disabled">-----------------------------</option>
+								<option value="#', $category['id'], '">', $category['name'], '</option>
+								<option value="" disabled="disabled">-----------------------------</option>';
+]]></search>
+			<add><![CDATA[
+								<option value="" disabled="disabled">-----------------------------</option>
+								<option value="?', (!empty($context['TPortal']) ? 'action=forum;' : ''), 'c=', $category['id'], '">', $category['name'], '</option>
+								<option value="" disabled="disabled">-----------------------------</option>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$themedir/Display.template.php">
+		<operation>
+			<search position="replace"><![CDATA[
+		echo '
+			<option value="" disabled="disabled">-----------------------------</option>
+			<option value="#', $category['id'], '">', $category['name'], '</option>
+			<option value="" disabled="disabled">-----------------------------</option>';
+]]></search>
+			<add><![CDATA[
+		echo '
+			<option value="" disabled="disabled">-----------------------------</option>
+			<option value="?', (!empty($context['TPortal']) ? 'action=forum;' : ''), 'c=', $category['id'], '">', $category['name'], '</option>
+			<option value="" disabled="disabled">-----------------------------</option>';
+]]></add>
+		</operation>
+	</file>
+	<file name="$sourcedir/QueryString.php">
+		<operation>
+			<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);
+]]></search>
+			<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);
+]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);
+]]></search>
+			<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);
+]]></add>
+		</operation>
+	</file>
+</modification>
