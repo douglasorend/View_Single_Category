@@ -2,12 +2,12 @@
 <!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>SleePy:SingleCategory</id>
-	<name>Single Category</name>
-	<version>2.2.0</version>
+	<name>View Single Category</name>
+	<version>2.3</version>
 	<type>modification</type>
 	
 	<install for="2.0-2.0.7">
-		<readme>README.txt</readme>
+		<readme type="file" parsebbc="true">readme.txt</readme>
 		<modification>SingleCategory-20x.xml</modification>
 	</install>
 	<uninstall for="2.0-2.0.7">
@@ -15,7 +15,7 @@
 	</uninstall>
 	
 	<install for="2.0.8-2.0.99">
-		<readme>README.txt</readme>
+		<readme type="file" parsebbc="true">readme.txt</readme>
 		<modification>SingleCategory-208.xml</modification>
 	</install>
 	<uninstall for="2.0.8-2.0.99">
@@ -23,7 +23,7 @@
 	</uninstall>
 	
 	<install for="1.1.10-1.1.99">
-		<readme>README.txt</readme>
+		<readme type="file" parsebbc="true">readme.txt</readme>
 		<modification>SingleCategory-11x.xml</modification>
 	</install>
 	<uninstall for="1.1.10-1.1.99">

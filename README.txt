@@ -1,6 +1,7 @@
 [hr]
-[center][color=red][size=16pt][b]VIEW SINGLE CATEGORY v2.2.0[/b][/size][/color]
-[url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=486]Link to Mod[/url]
+[center][color=red][size=16pt][b]VIEW SINGLE CATEGORY v2.3[/b][/size][/color]
+[url=http://www.simplemachines.org/community/index.php?action=profile;u=29084][b]Written by SleePy[/b][/url]
+[url=http://www.simplemachines.org/community/index.php?action=profile;u=253913][b]Taken Over By Dougiefresh[/b][/url] -> [url=http://custom.simplemachines.org/mods/index.php?mod=486]Link to Mod[/url]
 [/center]
 [hr]
 
@@ -14,10 +15,14 @@ Multiple Categories are supported with a comma separated array.
 There are no admin settings.  To disable it, you must remove this mod.
 
 [color=blue][b][size=12pt][u]Compatibility Notes[/u][/size][/b][/color]
-This mod was tested on SMF 2.0.7, but should work on SMF 2.0 and up.  SMF 1.1 is not and will not be supported, so please don't ask.
+This mod was tested on SMF 2.0.9, but should work on SMF 2.0 and up.  SMF 1.0 is not and will not be supported.
 
 [color=blue][b][size=12pt][u]Changelog[/u][/size][/b][/color]
 [quote]
+Version 2.3
+! Improved compatbility with TinyPortal at install time
++ Added compatibility with SimplePortal
+
 Version 2.2.0
 + Taken over by Dougiefresh from SleePy
 ! Updated for SMF 2.0.8
@@ -95,10 +100,13 @@ Version 1.1
 
 Version 1.0
 ! Release 
-
-v1.0 - March 20th, 2014
-o Initial Release of the mod
 [/quote]
+
+[color=blue][b][size=12pt][u]DO NOT INSTALL IF:[/u][/size][/b][/color]
+o In [b]./Themes/default/scripts/script.js[/b], none of the operations are successful.  One should be successful....
+o In [b]Sources/QueryString.php[/b], none of the three pairs of operations ([b]1 and 2[/b], [b]3 and 4[/b], or [b]5 and 6[/b]) are successful.
+
+Attach the affected file to [url=http://www.simplemachines.org/community/index.php?topic=118299.0]this topic[/url] for further assistance installing this.
 
 [hr]
 [url=http://creativecommons.org/licenses/by/3.0][img]http://i.creativecommons.org/l/by/3.0/80x15.png[/img][/url]
