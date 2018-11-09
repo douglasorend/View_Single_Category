@@ -303,16 +303,12 @@
 </file>
 <file name="$sourcedir/QueryString.php">
 	<operation>
-		<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);
-]]></search>
-		<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);
-]]></add>
+		<search position="replace"><![CDATA[board|topic]]></search>
+		<add><![CDATA[c|board|topic]]></add>
 	</operation>
 	<operation>
-		<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);
-]]></search>
-		<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);
-]]></add>
+		<search position="replace"><![CDATA[board|topic]]></search>
+		<add><![CDATA[c|board|topic]]></add>
 	</operation>
 </file>
 </modification>

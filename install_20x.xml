@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:SingleCategory</id>
-<version>2.1.9</version>
+<version>2.4</version>
 
 <file name="$boarddir/index.php">
 	<operation>
@@ -271,7 +271,7 @@
 </file>
 <file name="$themedir/scripts/script.js">
 /* No portal compatibility */
-	<operation error="ignore">
+	<operation>
 		<search position="replace"><![CDATA[oOption.value = aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0';]]></search>
 		<add><![CDATA[oOption.value = aBoardsAndCategories[i].isCategory ? '?action=forum;c=' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0';]]></add>
 	</operation>
@@ -282,34 +282,13 @@
 	</operation>
 </file>
 <file name="$sourcedir/QueryString.php">
-/* No portal compatibility */
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);]]></search>
-		<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);]]></add>
+	<operation>
+		<search position="replace"><![CDATA[board|topic]]></search>
+		<add><![CDATA[c|board|topic]]></add>
 	</operation>
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);]]></search>
-		<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);]]></add>
-	</operation>
-
-/* SimplePortal compatibility */
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);]]></add>
-	</operation>
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);]]></add>
-	</operation>
-
-/* TinyPortal compatibility */
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html?' . SID . '\$2\"'", $buffer);]]></add>
-	</operation>
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"/e', "'\"' . \$scripturl . '/' . strtr('\$1', '&;=', '//,') . '.html\$2\"'", $buffer);]]></add>
+	<operation>
+		<search position="replace"><![CDATA[board|topic]]></search>
+		<add><![CDATA[c|board|topic]]></add>
 	</operation>
 </file>
 </modification>

@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:SingleCategory</id>
-<version>2.1.9</version>
+<version>2.4</version>
 
 <file name="$boarddir/index.php">
 	<operation>
@@ -65,14 +65,6 @@
 	</operation>
 	<operation>
 		<search position="replace"><![CDATA[
-					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . $context['session_var'] . '=' . $context['session_id'] . '#c' . $row_board['id_cat'] : '',
-]]></search>
-		<add><![CDATA[
-					'collapse_href' => isset($row_board['can_collapse']) ? $scripturl . '?action=collapse;c=' . $row_board['id_cat'] . ';sa=' . ($row_board['is_collapsed'] > 0 ? 'expand;' : 'collapse;') . (isset($context['single_cats']) ? 'c_redirect=' . (is_array($_REQUEST['c']) ? implode(',', $_REQUEST['c']) : $_REQUEST['c']) . ';' : '') . $context['session_var'] . '=' . $context['session_id'] . ';c=' . $row_board['id_cat'] : '',
-]]></add>
-	</operation>
-	<operation>
-		<search position="replace"><![CDATA[
 		WHERE {query_see_board}' . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)),
@@ -82,7 +74,8 @@
 			AND b.child_level >= {int:child_level}') : '
 			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1))
 		. (isset($context['single_cats']) ? "
-			AND c.id_cat{raw:cat_field}" : ""),]]></add>
+			AND c.id_cat{raw:cat_field}
+			ORDER BY board_order ASC" : ""),]]></add>
 	</operation>
 	<operation>
 		<search position="before"><![CDATA[
@@ -91,9 +84,7 @@
 			'cat_field' => !empty($context['single_cats']) ? $context['single_cats'] : '',]]></add>
 	</operation>
 	<operation>
-		<search position="replace"><![CDATA[
-				$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '"></a>' . ($categories[$row_board['id_cat']]['can_collapse'] ? '<a href="' . $categories[$row_board['id_cat']]['collapse_href'] . '">' . $row_board['cat_name'] . '</a>' : $row_board['cat_name']);
-]]></search>
+		<search position="replace"><![CDATA[$categories[$row_board['id_cat']]['link'] = '<a id="c' . $row_board['id_cat'] . '"></a>' . (!$context['user']['is_guest'] ? '<a href="' . $scripturl . '?action=unread;c='. $row_board['id_cat'] . '" title="' . sprintf($txt['new_posts_in_category'], strip_tags($row_board['cat_name'])) . '">' . $row_board['cat_name'] . '</a>' : $row_board['cat_name']);]]></search>
 		<add><![CDATA[
 				// Single Category Mod Edited This.
 				$categories[$row_board['id_cat']]['href'] = $scripturl . '?' . (!empty($context['TPortal']) || !empty($context['SPortal']) ? 'action=forum;' : '') . 'c=' . $row_board['id_cat'];
@@ -134,38 +125,6 @@
 		$context['linktree'][] = array(
 			'url' => $scripturl . 'c=' . implode(',', $context['category_selection']),
 			'name' => $names);
-	}
-]]></add>
-	</operation>
-</file>
-<file name="$sourcedir/BoardIndex.php">
-	<operation>
-		<search position="after"><![CDATA[
-	// And go back to the board index.
-	BoardIndex();
-]]></search>
-		<add><![CDATA[
-	// Are we redirecting to a category?
-	if (isset($_REQUEST['c_redirect']))
-	{
-		// Maybe its an array? Or a haxor.
-		if (!is_numeric($_REQUEST['c_redirect']) || is_array($_REQUEST['c_redirect']))
-		{
-			// Make c an array for crying out loud.
-			if (!is_array($_REQUEST['c_redirect']))
-				$_REQUEST['c_redirect'] = explode(',', $_REQUEST['c_redirect']);
-
-			// Remove the nasties.
-			foreach ($_REQUEST['c_redirect'] AS $key => $tmp)
-				if (!is_numeric(trim($tmp)))
-					unset($_REQUEST['c_redirect'][$key]);
-
-			// Put it back.
-			$_REQUEST['c_redirect'] = implode(',', $_REQUEST['c_redirect']);
-		}
-
-		// Get out of this mess.
-		redirectexit((!empty($context['TPortal']) || !empty($context['SPortal']) || defined('PortaMx') ? 'action=forum;' : '') . 'c=' . $_REQUEST['c_redirect']);
 	}
 ]]></add>
 	</operation>
@@ -271,7 +230,7 @@
 </file>
 <file name="$themedir/scripts/script.js">
 /* No portal compatibility */
-	<operation error="ignore">
+	<operation>
 		<search position="replace"><![CDATA[oOption.value = aBoardsAndCategories[i].isCategory ? '#c' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0';]]></search>
 		<add><![CDATA[oOption.value = aBoardsAndCategories[i].isCategory ? '?action=forum;c=' + aBoardsAndCategories[i].id : '?board=' + aBoardsAndCategories[i].id + '.0';]]></add>
 	</operation>
@@ -282,34 +241,13 @@
 	</operation>
 </file>
 <file name="$sourcedir/QueryString.php">
-/* No portal compatibility */
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);]]></search>
-		<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);]]></add>
+	<operation>
+		<search position="replace"><![CDATA[board|topic]]></search>
+		<add><![CDATA[c|board|topic]]></add>
 	</operation>
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);]]></search>
-		<add><![CDATA[c|board|topic)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);]]></add>
-	</operation>
-
-/* SimplePortal compatibility */
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);]]></add>
-	</operation>
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);]]></add>
-	</operation>
-
-/* TinyPortal compatibility */
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"~', 'sid_insert__preg_callback', $buffer);]]></add>
-	</operation>
-	<operation error="ignore">
-		<search position="replace"><![CDATA[board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);]]></search>
-		<add><![CDATA[c|board|topic|page|cat)=[^#"]+?)(#[^"]*?)?"~', 'pathinfo_insert__preg_callback', $buffer);]]></add>
+	<operation>
+		<search position="replace"><![CDATA[board|topic]]></search>
+		<add><![CDATA[c|board|topic]]></add>
 	</operation>
 </file>
 </modification>
