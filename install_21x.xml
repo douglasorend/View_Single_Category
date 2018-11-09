@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:SingleCategory</id>
-<version>2.4</version>
+<version>2.5</version>
 
 <file name="$boarddir/index.php">
 	<operation>
@@ -67,7 +67,7 @@
 		<search position="replace"><![CDATA[
 		WHERE {query_see_board}' . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
 			AND b.child_level >= {int:child_level}') : '
-			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)),
+			AND b.child_level BETWEEN ' . $boardIndexOptions['base_level'] . ' AND ' . ($boardIndexOptions['base_level'] + 1)) . '
 ]]></search>
 		<add><![CDATA[
 		WHERE {query_see_board}' . (empty($boardIndexOptions['countChildPosts']) ? (empty($boardIndexOptions['base_level']) ? '' : '
@@ -164,6 +164,7 @@
 <file name="$sourcedir/Recent.php">
 	<operation>
 		<search position="before"><![CDATA['delete_possible' => ($row['id_first_msg'] != $row['id_msg'] || $row['id_last_msg'] == $row['id_msg']) && (empty($modSettings['edit_disable_time']) || $row['poster_time'] + $modSettings['edit_disable_time'] * 60 >= time()),
+			'css_class' => 'windowbg',
 		);]]></search>
 		<add><![CDATA[
 		$context['posts'][$row['id_msg']]['category']['href'] = $scripturl . '?' . (!empty($context['TPortal']) || !empty($context['SPortal']) ? 'action=forum;' : '') . 'c=' . $row['id_cat'];

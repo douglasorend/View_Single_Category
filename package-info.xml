@@ -3,8 +3,8 @@
 <package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
 	<id>SleePy:SingleCategory</id>
 	<name>View Single Category</name>
-	<version>2.4</version>
 	<type>modification</type>
+	<version>2.5</version>
 	
 	<install for="1.1.10-1.1.99">
 		<readme type="file" parsebbc="true">readme.txt</readme>
