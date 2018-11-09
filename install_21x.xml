@@ -2,7 +2,7 @@
 <!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
 <modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
 <id>SleePy:SingleCategory</id>
-<version>2.6</version>
+<version>2.7</version>
 
 <file name="$boarddir/index.php">
 	<operation>
@@ -243,12 +243,12 @@
 </file>
 <file name="$sourcedir/QueryString.php">
 	<operation>
-		<search position="replace"><![CDATA[board|topic]]></search>
-		<add><![CDATA[c|board|topic]]></add>
+		<search position="before"><![CDATA[)((?:board|topic]]></search>
+		<add><![CDATA[|c]]></add>
 	</operation>
 	<operation>
-		<search position="replace"><![CDATA[board|topic]]></search>
-		<add><![CDATA[c|board|topic]]></add>
+		<search position="before"><![CDATA[?((?:board|topic]]></search>
+		<add><![CDATA[|c]]></add>
 	</operation>
 </file>
 </modification>
